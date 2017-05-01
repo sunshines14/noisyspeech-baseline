@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 import wave
 import os
 
-ff=open('output_20_ran_rec.wav', 'rb')
+ff=open('output_434_sort_rec.wav', 'rb')
 
-a=ff.read(4230196)
+a=ff.read(81117318)
 h = ''
-for i in range(0, 2115098) :
+for i in range(0, 40558659) :
     h = h+'h'
 
 
@@ -111,31 +111,38 @@ def find_mValue(ratioArr) :
     beepArr = []
     lastArr = []
     tmpArr = []
+    tmp2Arr = [] 
     inx = 0
     t = 0
     IsBeep = False 
 
     for value in ratioArr :
+
         inx = ratioArr.index(value)
         t = inx + 1
         
         tmpArr = ratioArr[inx-5 : inx]
-        det = 0 
+        tmp2Arr = ratioArr[inx : inx+5]
+        det1 = 0
+        det2 = 0
 
         for x in tmpArr :
             if x>= 100 :
-                det = det + 1 
+                det1 = det1 + 1 
+        for x in tmp2Arr :
+            if x>= 100 :
+                det2 = det2 + 1 
 
-        if (det == 0) and (value >= float(100)) :
+        if (det1 == 0) and (det2 == 5) and (value >= float(100)) :
             IsBeep = True
-            beepArr.append(t) 
+            beepArr.append(t) # 시작값
 
-        elif (det != 0) and (IsBeep == True) and (value >= float(100)) :
-            beepArr.append(t)
+        #elif (det1 != 0) and (IsBeep == True) and (value >= float(100)) : 
+            #beepArr.append(t)
 
-        elif (det != 0) and (IsBeep == True) and (value < float(100)) :
-            if det >= 3 :
-                beepArr.append(t)
+        elif (IsBeep == True) and (value < float(100)) :
+            if det1 >= 3 :
+                beepArr.append(t) # 끝값
             else :
                 IsBeep = False
                 beepArr.pop()
@@ -147,7 +154,7 @@ def find_mValue(ratioArr) :
     p2 = 0
     mValue = 0
     fst = 0
-    
+
     for x in lastArr :
         if fst == 0 :
             p1 = 160 * (beepArr[0:x][0]) 
@@ -161,12 +168,12 @@ def find_mValue(ratioArr) :
             mValue = (p1 + p2) / 2
             mValueArr.append(mValue)
             fst = x
-
+    
     return mValueArr
 
-
 def set_path() :
-    path = raw_input("path : ")
+    #path = raw_input("path : ")
+    path = "/home/antman/soonshin/corpus"
     path.replace("\\", "\\\\")
 
     return path
@@ -198,7 +205,7 @@ def seg_corpus(mValueArr, infiles) :
         p2 = mValueArr[n+1] - 24000
         length = p2 - p1
 
-        inFile = wave.open("output_20_ran_rec.wav", 'rb')
+        inFile = wave.open("output_434_sort_rec.wav", 'rb')
         inFile.setpos(p1)
         tmp = inFile.readframes(length)
 
@@ -223,7 +230,7 @@ ratioArr = get_ratio(vArr, v2Arr)
 #for result in ratioArr :
 #    print result
 
-path = set_path()
+path = set_path() 
 infiles = set_files(path)
 mValueArr = find_mValue(ratioArr)
 seg_corpus(mValueArr, infiles)
