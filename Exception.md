@@ -1,13 +1,16 @@
-<segmentation ¿¹¿ÜÃ³¸®>
+<segmentation ì˜ˆì™¸ì²˜ë¦¬>
 
-Æ¯Â¡°ª 100 ±âÁØÀ¸·Î beep ½ÃÀÛ°ª°ú ³¡°ªÀ» Ã£±â
+- íŠ¹ì§•ê°’ 100 ê¸°ì¤€ìœ¼ë¡œ beep ì‹œìž‘ê°’ê³¼ ëê°’ì„ ì°¾ê¸°
 
-det1 -> ¾ÕÀÇ ratio °ª 5°³ Áß¿¡ 100ÀÌ»óÀÎ °ªÀÇ °³¼ö
-det2 -> µÚÀÇ ratio °ª 5°³ Áß¿¡ 100ÀÌ»óÀÎ °ªÀÇ °³¼ö
+- det1 
+  - ì•žì˜ ratio ê°’ 5ê°œ ì¤‘ì— 100ì´ìƒì¸ ê°’ì˜ ê°œìˆ˜
+- det2 
+  - ë’¤ì˜ ratio ê°’ 5ê°œ ì¤‘ì— 100ì´ìƒì¸ ê°’ì˜ ê°œìˆ˜
 
-beep ½ÃÀÛ °ª -> det1 == 0 and det2 == 5 ÀÏ¶§ÀÇ 100ÀÌ»óÀÇ ratio °ª
+- beep ì‹œìž‘ ê°’
+  - det1 == 0 and det2 == 5 ì¼ë•Œì˜ 100ì´ìƒì˜ ratio ê°’
 
-beep ³¡ °ª 
--> beepÀ½ ±¸°£ÀÌ¸ç, 100ÀÌÇÏÀÇ ratio °ªÀÌ ³ªÅ¸³ª´Â °æ¿ì
--> 1) det1 >= 3 ÀÎ °æ¿ì(60%)´Â beepÀ½ µµÁßÀÇ ¿¹¿Ü°ªÀ¸·Î ÀÎÁ¤
--> 2) 1)ÀÌ ¾Æ´Ñ °æ¿ì, beepÀ½ ³¡ °ªÀÇ ÀÏºÎ Áß ÇÏ³ª·Î ÀÎÁ¤-> beep ³¡ °ª 
+- beep ë ê°’ 
+  - beepìŒ êµ¬ê°„ì´ë©°, 100ì´í•˜ì˜ ratio ê°’ì´ ë‚˜íƒ€ë‚˜ëŠ” ê²½ìš°
+  - 1) det1 >= 3 ì¸ ê²½ìš°(60%)ëŠ” beepìŒ ë„ì¤‘ì˜ ì˜ˆì™¸ê°’ìœ¼ë¡œ ì¸ì •
+  - 2) 1)ì´ ì•„ë‹Œ ê²½ìš°, beepìŒ ë ê°’ì˜ ì¼ë¶€ ì¤‘ í•˜ë‚˜ë¡œ ì¸ì •(beep ë ê°’) 
