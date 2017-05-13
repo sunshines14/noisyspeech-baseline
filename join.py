@@ -24,23 +24,14 @@ def SetFiles(path) :
     infiles.sort()
 
     return infiles
-    """
-    files = os.listdir(path)
 
-    for f in files :
-        if (f.find(".wav") is not -1) and (f != "beep_processed.wav") :
-            infiles.append(f)
-
-    infiles.sort()
-
-    return infiles
-    """
 
 def Merge(infiles) :
     dataArr = []
     
-    outfile = raw_input("file name : ")
-    outfile = outfile + ".wav"
+    #outfile = raw_input("file name : ")
+    #outfile = outfile + ".wav"
+    outfile = "join_output.wav"
     
     bFile = wave.open('beep_processed.wav', 'rb')
     beep = [bFile.getparams(), bFile.readframes(bFile.getnframes())]
@@ -67,12 +58,13 @@ def Merge(infiles) :
     output.close() 
     
 def Main() :
-    
-    path = SetPath()
+    count = 0
+    #path = SetPath()
+    path = "/home/antman/soonshin/join"
     infiles = SetFiles(path)
     for i in infiles :
-        print (i + '\n')
+        count = count + 1
+        #print (i + '\n')
     Merge(infiles)
-
-
+    print count 
 Main()
