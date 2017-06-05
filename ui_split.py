@@ -6,17 +6,19 @@ import wave
 import os
 import math
 
+
 def User() :
     listArr = []
 
     fileName = raw_input("file name : ")
+    time_length = int(input("time length(/s) cf)마지막 구간 약 1분 제외된 시간 : "))
     tmp = open("list.txt", "r")
     
     for i in tmp :
         i = i.replace("\n", "")
         listArr.append(i)
 
-    return (fileName, listArr)
+    return (fileName, listArr, time_length)
     
 
 def Spectrogram(fileName) :
@@ -89,7 +91,7 @@ def Get_index(f) :
     return (iArr, iArr2)
 
 
-def Get_value(iArr, iArr2, f, Sxx) :
+def Get_value(iArr, iArr2, f, t, Sxx) :
     c = 0
     vSum = 0
     v2Sum = 0
@@ -194,11 +196,11 @@ def Find_mValue(ratioArr) :
             mValue = (p1 + p2) / 2
             mValueArr.append(mValue)
             fst = x
-    
+
     return mValueArr
 
 
-def Split_corpus(mValueArr, listArr, fileName) :
+def Split_corpus(mValueArr, listArr, fileName, time_length) :
     n = 0
     p1 = 0
     p2 = 0
@@ -209,6 +211,10 @@ def Split_corpus(mValueArr, listArr, fileName) :
     while n < len(listArr) : 
         p1 = mValueArr[n] + 24000 
         p2 = mValueArr[n+1] - 24000
+        
+        if (p2/16000) >= time_length :
+           break
+
         length = p2 - p1
 
         inFile = wave.open(fileName, 'rb')
@@ -228,26 +234,33 @@ def Split_corpus(mValueArr, listArr, fileName) :
         inFile.close()
         outFile.close()
 
+        nextFileName = listArr[n+1] 
 
-fileName, listArr = User()
-#print listArr   
-f,t,Sxx = Spectrogram(fileName)
-print ": Spectrogram"
-iArr, iArr2  = Get_index(f)
-print ": Get index"
-vArr, v2Arr = Get_value(iArr, iArr2, f, Sxx)
-print ": Get value"
-ratioArr = Get_ratio(vArr, v2Arr) 
-print ": Get ratio"
-#for result in ratioArr :
-#    print result
-
-#for i in infiles :
-#    print (i + '\n')
-mValueArr = Find_mValue(ratioArr)
-print ": Find mValue"
-Split_corpus(mValueArr, listArr, fileName)
-print ": Split corpus"
-print ": Completed"
+    return nextFileName
 
 
+def Main() :
+    fileName, listArr, time_length = User()
+    #print listArr   
+    f,t,Sxx = Spectrogram(fileName)
+    print ": Spectrogram"
+    iArr, iArr2  = Get_index(f)
+    print ": Get index"
+    vArr, v2Arr = Get_value(iArr, iArr2, f, t, Sxx)
+    print ": Get value"
+    ratioArr = Get_ratio(vArr, v2Arr) 
+    print ": Get ratio"
+    #for result in ratioArr :
+    #    print result
+
+    #for i in infiles :
+    #    print (i + '\n')
+    mValueArr = Find_mValue(ratioArr)
+    print ": Find mValue"
+    nextFileName = Split_corpus(mValueArr, listArr, fileName, time_length)
+    print ": Split corpus"
+    print ": Completed"
+
+    print "%s" %nextFileName
+
+Main()
