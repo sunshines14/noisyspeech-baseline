@@ -9,8 +9,7 @@ def User() :
     print "/home/antman/soonshin/ui_merge"
     path = raw_input("path : ")
 
-    start_pt = raw_input("start point(file name) : ")
-    start_pt = start_pt + ".wav"
+    start_pt = raw_input("start point : ")
 
     time_user = raw_input("time length(h/m/s) : ")
     time_user = time_user.split("/")
@@ -20,7 +19,7 @@ def User() :
     for root, dirs, files in os.walk(path) :
         for f in files :
             ext = os.path.splitext(f)[-1]
-            if (ext == '.wav') and (f != 'beep.wav') : 
+            if (ext == '.wav') and (f != 'beep.wav') and (f != 'slience.wav') : 
                 infiles.append(f)
   
     infiles.sort() 
@@ -30,7 +29,7 @@ def User() :
 
 def Set(infiles, start_pt, time_length) :
     mergeArr = []
-    sum_samples = 48000 # beep 
+    sum_samples = 1008000 # beep(3s) 48000, slience(60s) 960000
     
     if Binary_Search(infiles, start_pt) == True :
         start = infiles.index(start_pt)
@@ -39,7 +38,7 @@ def Set(infiles, start_pt, time_length) :
     for f in mergeArr :
         ff = wave.open(f, 'rb')
         samples = ff.getnframes()
-        sum_samples = sum_samples + samples + 48000
+        sum_samples = sum_samples + samples + 48000 
         ff.close()
 
         if (sum_samples/16000) >=  time_length :
@@ -58,8 +57,11 @@ def Set(infiles, start_pt, time_length) :
 def Merge(mergeArr) :
     dataArr = []
     outFile_name = raw_input("file name : ") 
-    outFile_name = outFile_name + ".wav"
 
+    sFile = wave.open('slience.wav', 'rb')
+    slience = [sFile.getparams(), sFile.readframes(sFile.getnframes())]
+    dataArr.append(slience)
+    
     bFile = wave.open('beep.wav', 'rb')
     beep = [bFile.getparams(), bFile.readframes(bFile.getnframes())]
     dataArr.append(beep)
@@ -71,6 +73,7 @@ def Merge(mergeArr) :
 
         inFile.close()
 
+    sFile.close()
     bFile.close()
 
     outFile = wave.open(outFile_name, 'wb')
