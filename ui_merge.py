@@ -5,13 +5,18 @@ import wave
 
 def User() :
     infiles = []
-    
-    print "/home/antman/soonshin/ui"
-    path = raw_input("path : ")
-    start_pt = raw_input("start point : ")
-    time_length = int(input("time length(/m) : "))
 
-    time_length = time_length * 60
+    print "/home/antman/soonshin/ui_merge"
+    path = raw_input("path : ")
+
+    start_pt = raw_input("start point(file name) : ")
+    start_pt = start_pt + ".wav"
+
+    time_user = raw_input("time length(h/m/s) : ")
+    time_user = time_user.split("/")
+
+    time_length = (int(time_user[0])*3600) + (int(time_user[1])*60) + (int(time_user[2]))
+
     for root, dirs, files in os.walk(path) :
         for f in files :
             ext = os.path.splitext(f)[-1]
@@ -102,7 +107,8 @@ def Main() :
     infiles, start_pt, time_length = User()
     mergeArr = Set(infiles, start_pt, time_length)
     Merge(mergeArr)
-    print mergeArr
+    #print mergeArr
+    print "Completed"
     print (len(mergeArr)) 
     
 Main() 
