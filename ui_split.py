@@ -11,6 +11,7 @@ def User() :
     listArr = []
 
     fileName = raw_input("file name : ")
+    fileName = fileName + ".wav"
     time_user = raw_input("time length(h/m/s) : ")
     time_user = time_user.split("/")
 
@@ -20,8 +21,8 @@ def User() :
     tmp = open("list.txt", "r")
 
     for i in tmp :
-    i = i.replace("\n", "")
-    listArr.append(i)
+        i = i.replace("\n", "")
+        listArr.append(i)
 
     return (fileName, listArr, time_length)
 
@@ -82,8 +83,7 @@ def Get_index(f) :
     c = 0
 
     for i in f :  
-        if i == float(1000) or i == float(2000) or i == float(3000) or i == 
-            float(4000) or  i == float(5000) :
+        if i == float(1000) or i == float(2000) or i == float(3000) or i == float(4000) or  i == float(5000) :
             iArr.append(c)  
             c = c+1
         elif i < float(2000) and i != float(1000) :
@@ -114,11 +114,11 @@ def Get_value(iArr, iArr2, f, t, Sxx) :
             #tmp = math.log(tmp)
             if x in iArr :
                 vSum = np.add(vSum, tmp)
-            elif (x not in iArr) and (x not in iArr2)
+            elif (x not in iArr) and (x not in iArr2) :
                 v2Sum = np.add(v2Sum, tmp)
 
-        vSum = np.divide(vSum, 1)
-        v2Sum = np.divide(v2Sum, 12)
+        vSum = np.divide(vSum, l)
+        v2Sum = np.divide(v2Sum, l2)
 
         vArr.append(vSum)
         v2Arr.append(v2Sum)
@@ -147,6 +147,8 @@ def Find_mValue(ratioArr) :
     inx = 0
     t = 0
     IsBeep = False
+    
+    detValue = 600
 
     for value in ratioArr :
         inx = ratioArr.index(value)
@@ -158,25 +160,25 @@ def Find_mValue(ratioArr) :
         det2 = 0
 
         for x in tmpArr :
-            if x >= 300 : 
+            if x >= detValue : 
                 det1 = det1 + 1
         for x in tmp2Arr :
-            if x >= 300 :
+            if x >= detValue :
                 det2 = det2 + 1
 
-        if (det == 0) and (det2 == 10) and (value >= float(300)) :
+        if (det1 == 0) and (det2 == 10) and (value >= float(detValue)) :
             IsBeep = True
             beepArr.append(t) #시작값
         
-        elif (IsBeep == True) and (value < float(300)) :
+        elif (IsBeep == True) and (value < float(detValue)) :
             if det1 >= 8 :
                 beepArr.append(t) #끝값
             else :
                 IsBeep = False
                 beepArr.pop()
                 beepArr.append('\n')
-                lastArr.append(len(beepArr) - 1))
-
+                lastArr.append((len(beepArr) - 1))
+      
     mValueArr = []
     p1 = 0
     p2 = 0
@@ -196,7 +198,7 @@ def Find_mValue(ratioArr) :
             mValue = (p1 + p2) / 2
             mValueArr.append(mValue)
             fst = x 
-
+    
     return mValueArr
 
 
@@ -208,6 +210,7 @@ def Split_corpus(mValueArr, listArr, fileName, time_length) :
     tmp = 0
 
     while n < len(listArr) :
+        
         p1 = mValueArr[n] + 24000
         p2 = mValueArr[n+1] - 24000
 
@@ -217,7 +220,7 @@ def Split_corpus(mValueArr, listArr, fileName, time_length) :
         length = p2 - p1
 
         inFile = wave.open(fileName, 'rb')
-        inFIle.setpos(p1)
+        inFile.setpos(p1)
         tmp = inFile.readframes(length)
 
         outName = str(listArr[n])
@@ -233,7 +236,7 @@ def Split_corpus(mValueArr, listArr, fileName, time_length) :
         inFile.close()
         outFile.close()
 
-        nextFileName = listArr[n+1]
+        nextFileName = listArr[n]
 
     return nextFileName
 
@@ -253,59 +256,6 @@ def Main() :
     nextFileName = Split_corpus(mValueArr, listArr, fileName, time_length)
     print ": Split corpus"
     print ": All Completed"
-    print "%s" %nextFileName
+    print "next file name : %s" %nextFileName
 
 Main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
