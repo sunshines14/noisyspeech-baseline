@@ -11,12 +11,17 @@ def User() :
     listArr = []
 
     fileName = raw_input("file name : ")
-    fileName = fileName + ".wav"
-    time_user = raw_input("time length(h/m/s) : ")
-    time_user = time_user.split("/")
 
-    time_length = (int(time_user[0])*3600) + (int(time_user[1])*60) + (int(time_user[2]))
-    time_length = time_length - 60 #마지막 약 1분간의 무의미한 구간 제외
+    time_set = int(input("(1.default 2.customize) time set : "))
+    if time_set == 1 :
+        ff2 = wave.open(fileName, 'rb')
+        samples = ff2.getnframes()
+        time_length = int(samples/16000)
+        time_length = time_length - 60 # 마지막 약 1분간의 무의미한 구간 제외
+    elif time_set == 2 :
+        time_user = raw_input("time length(h/m/s) : ")
+        time_user = time_user.split("/")
+        time_length = (int(time_user[0])*3600) + (int(time_user[1])*60) + (int(time_user[2]))
 
     tmp = open("list.txt", "r")
 
