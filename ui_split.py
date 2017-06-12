@@ -10,11 +10,11 @@ import math
 def User() :
     listArr = []
 
-    fileName = raw_input("file name : ")
+    filePath = raw_input("file path : ")
 
     time_set = int(input("(1.default 2.customize) time set : "))
     if time_set == 1 :
-        ff2 = wave.open(fileName, 'rb')
+        ff2 = wave.open(filePath, 'rb')
         samples = ff2.getnframes()
         time_length = int(samples/16000)
         time_length = time_length - 60 # 마지막 약 1분간의 무의미한 구간 제외
@@ -23,18 +23,24 @@ def User() :
         time_user = time_user.split("/")
         time_length = (int(time_user[0])*3600) + (int(time_user[1])*60) + (int(time_user[2]))
 
-    tmp = open("list.txt", "r")
+    detValue = int(input("detValue : "))
 
+    with open("/home/antman/soonshin/ui/list_merge.txt", "r") as path_list :
+        for path in path_list.readlines() :
+            listArr.append(path.splitlines()[0])
+
+    """
     for i in tmp :
         i = i.replace("\n", "")
         listArr.append(i)
+    """
 
-    return (fileName, listArr, time_length)
+    return (filePath, listArr, time_length, detValue)
 
 
-def Spectrogram(fileName) :
-    ff = open(fileName, 'rb')
-    ff2 = wave.open(fileName, 'rb')
+def Spectrogram(filePath) :
+    ff = open(filePath, 'rb')
+    ff2 = wave.open(filePath, 'rb')
 
     samples = ff2.getnframes()
 
@@ -144,7 +150,7 @@ def Get_ratio(vArr, v2Arr) :
     return ratioArr
 
 
-def Find_mValue(ratioArr) :
+def Find_mValue(ratioArr, detValue) :
     beepArr = []
     lastArr = []
     tmpArr = []
@@ -152,8 +158,6 @@ def Find_mValue(ratioArr) :
     inx = 0
     t = 0
     IsBeep = False
-    
-    detValue = 600
 
     for value in ratioArr :
         inx = ratioArr.index(value)
@@ -207,7 +211,7 @@ def Find_mValue(ratioArr) :
     return mValueArr
 
 
-def Split_corpus(mValueArr, listArr, fileName, time_length) :
+def Split_corpus(mValueArr, listArr, filePath, time_length) :
     n = 0
     p1 = 0
     p2 = 0
@@ -224,11 +228,12 @@ def Split_corpus(mValueArr, listArr, fileName, time_length) :
 
         length = p2 - p1
 
-        inFile = wave.open(fileName, 'rb')
+        inFile = wave.open(filePath, 'rb')
         inFile.setpos(p1)
         tmp = inFile.readframes(length)
 
         outName = str(listArr[n])
+        outName = outName.replace(".wav", "_noise") + ".wav" 
         outFile = wave.open(outName, 'wb')
         outFile.setnchannels(1)
         outFile.setsampwidth(2)
@@ -241,14 +246,14 @@ def Split_corpus(mValueArr, listArr, fileName, time_length) :
         inFile.close()
         outFile.close()
 
-        nextFileName = listArr[n]
+        nextFilePath = listArr[n]
 
-    return nextFileName
+    return nextFilePath
 
 
 def Main() :
-    fileName, listArr, time_length = User()
-    f,t,Sxx = Spectrogram(fileName)
+    filePath, listArr, time_length, detValue = User()
+    f,t,Sxx = Spectrogram(filePath)
     print ": Spectrogram"
     iArr, iArr2 = Get_index(f)
     print ": Get index"
@@ -256,11 +261,11 @@ def Main() :
     print ": Get value"
     ratioArr = Get_ratio(vArr, v2Arr)
     print ": Get ratio"
-    mValueArr = Find_mValue(ratioArr)
+    mValueArr = Find_mValue(ratioArr, detValue)
     print ": Find mValue"
-    nextFileName = Split_corpus(mValueArr, listArr, fileName, time_length)
+    nextFilePath = Split_corpus(mValueArr, listArr, filePath, time_length)
     print ": Split corpus"
     print ": All Completed"
-    print "next file name : %s" %nextFileName
+    print "next file name : %s" %nextFilePath
 
 Main()

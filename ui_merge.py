@@ -6,8 +6,8 @@ import wave
 def User() :
     infiles = []
 
-    print "/home/antman/soonshin/ui_merge"
-    path = raw_input("path : ")
+    #print "/home/antman/soonshin/ui_merge"
+    #path = raw_input("path : ")
 
     start_pt = raw_input("start point : ")
 
@@ -16,6 +16,16 @@ def User() :
 
     time_length = (int(time_user[0])*3600) + (int(time_user[1])*60) + (int(time_user[2]))
 
+    path_list = open("list_mk.txt", 'r')
+    infiles = path_list.readlines() 
+    
+    with open("list_all.txt", 'r') as path_list :
+        for path in path_list.readlines() :
+            infiles.append(path.splitlines()[0])
+
+    path_list.close()
+
+    """
     for root, dirs, files in os.walk(path) :
         for f in files :
             ext = os.path.splitext(f)[-1]
@@ -23,6 +33,7 @@ def User() :
                 infiles.append(f)
   
     infiles.sort() 
+    """
 
     return infiles, start_pt, time_length
 
@@ -30,10 +41,14 @@ def User() :
 def Set(infiles, start_pt, time_length) :
     mergeArr = []
     sum_samples = 1008000 # beep(3s) 48000, slience(60s) 960000
+    start = infiles.index(start_pt)
+    mergeArr = infiles[start:]
     
+    """
     if Binary_Search(infiles, start_pt) == True :
         start = infiles.index(start_pt)
         mergeArr = infiles[start:]
+    """ 
 
     for f in mergeArr :
         ff = wave.open(f, 'rb')
@@ -46,7 +61,7 @@ def Set(infiles, start_pt, time_length) :
             mergeArr = mergeArr[:end] 
             break 
     
-    tmp = open("list.txt", "w")
+    tmp = open("list_merge.txt", "w")
     for i in mergeArr :
        tmp.write(i)
        tmp.write("\n")
@@ -110,6 +125,7 @@ def Main() :
     infiles, start_pt, time_length = User()
     mergeArr = Set(infiles, start_pt, time_length)
     Merge(mergeArr)
+    #os.chmod("merge.wav", 0755)
     #print mergeArr
     print "Completed"
     print (len(mergeArr)) 
