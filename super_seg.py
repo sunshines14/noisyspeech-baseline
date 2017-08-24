@@ -1,3 +1,5 @@
+#!/usr/bin/env ipython
+
 import struct
 import numpy as np
 from scipy import signal
@@ -25,7 +27,7 @@ def User(filePath, time_set, detValue) :
         time_user = time_user.split("/")
         time_length = (int(time_user[0])*3600) + (int(time_user[1])*60) + (int(time_user[2]))
 
-    with open("/home/antman/noisy_corpus/ui/list_merge", "r") as path_list :
+    with open("/home/antman/noisy_corpus/exe/list_merge", "r") as path_list :
         for path in path_list.readlines() :
             listArr.append(path.splitlines()[0])
 
@@ -81,23 +83,27 @@ def Spectrogram(filePath) :
 
     return Sxx
 
+
 def myFloat(mylist) :
     return map(float, mylist)
 
-def Get_index(Sxx, detValue) :
+
+def Get_ratio(Sxx, detValue) :
     Sxx = np.transpose(Sxx)
     t = len(Sxx) 
     i = 0
     vSum = 0
     v2Sum = 0
     binaryArr = []
+    ratio = 0 
 
     for i in range(t) :
         v2Sum = sum(Sxx[i][65:])
         vSum = Sxx[i][32] + Sxx[i][64] + Sxx[i][96] + Sxx[i][128] + Sxx[i][160]
         v2Sum = v2Sum - vSum + Sxx[i][32] + Sxx[i][64] 
         if v2Sum != 0 :
-            binaryArr.append(1 if vSum/v2Sum >= detValue else 0) 
+            ratio = vSum/v2Sum
+            binaryArr.append(1 if ratio >= detValue else 0) 
 
     return binaryArr
 
@@ -193,21 +199,21 @@ def Split_corpus(mValueArr, listArr, filePath, time_length) :
 def Main() :
     t0 = time()
     filePath, listArr, time_length, detValue = User(sys.argv[1], sys.argv[2], sys.argv[3])
-    print ": User"
+    print ": Input user"
     print "%.3fs" % (time()-t0)
     Sxx = Spectrogram(filePath)
-    print ": Spectrogram"
+    print ": Make spectrogram"
     print "%.3fs" % (time()-t0)
-    binaryArr = Get_index(Sxx, detValue)
-    print ": Get index"
+    binaryArr = Get_ratio(Sxx, detValue)
+    print ": Get ratio"
     print "%.3fs" % (time()-t0)
     mValueArr = Find_mValue(binaryArr, detValue)
     print ": Find mValue"
     print "%.3fs" % (time()-t0)
     nextFilePath = Split_corpus(mValueArr, listArr, filePath, time_length)
     print ": Split corpus"
-    print ": All Completed"
     print "%.3fs" % (time()-t0)
+    print "--------------------------------"
     print "next file name : %s" %nextFilePath
 
 Main()
